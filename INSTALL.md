@@ -4,7 +4,7 @@ To tweet your own Working Group's document changes, follow these steps:
 
 ## 1. Clone this Repo
 
-This service isn't provided in a central repo because we don't want to have your credentials. Create a copy, preferably in your WG's organisation.
+This service isn't provided in a central repo because we don't want to have your credentials. Create a copy, by using this repo as a template, or forking it.
 
 ## 2. Create a Twitter Application
 
@@ -53,3 +53,8 @@ Go into [`.github/workflows/run.yml`](.github/workflows/run.yml) and change this
 
 1. If they aren't already, enable Actions under `Settings` -> `Actions`.
 2. On the same page, make sure that `Workflow permissions` is set to `Read and write permissions` (so that `LAST_SEEN` can be saved to the repo).
+
+
+## 6. Update
+
+Once in a while, you should update your copy of the repo, by pulling changes from upstream.
