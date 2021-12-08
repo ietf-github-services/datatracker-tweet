@@ -86,7 +86,7 @@ class DatatrackerTracker:
             results = self.get_doc(next_link)
             more_events = results["objects"]
             more_events.reverse()
-            events.extend(more_events)
+            events[:0] = more_events
         new_events = [event for event in events if event["id"] > last_seen_id]
         if len(new_events) == len(events) and last_seen_id is not None:
             self.warn(f"Event ID {last_seen_id} not found.")
