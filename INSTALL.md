@@ -60,15 +60,4 @@ Go into [`.github/workflows/run.yml`](.github/workflows/run.yml) and change this
 
 Once in a while, you should update your copy of the repo, by pulling changes from upstream.
 
-On a local copy, do this once:
-
-~~~ bash
-> git remote add upstream https://github.com/ietf-github-services/datatracker-tweet.git
-~~~
-
-Then, periodically you should:
-
-~~~ bash
-> git pull upstream main
-> git push origin main
-~~~
+The easiest way to do this is to go to the GitHub home page of your fork of the repo, click 'Fetch upstream' near the top right, and confirm with 'Fetch and merge'.
