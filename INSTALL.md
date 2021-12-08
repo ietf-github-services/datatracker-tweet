@@ -2,9 +2,9 @@
 
 To tweet your own Working Group's document changes, follow these steps:
 
-## 1. Clone this Repo
+## 1. Fork this Repo
 
-This service isn't provided in a central repo because we don't want to have your credentials. Create a copy, by using this repo as a template, or forking it.
+This service isn't provided in a central repo because we don't want to have your credentials. Create a copy by forking it (so that you can pull updates later).
 
 ## 2. Create a Twitter Application
 
