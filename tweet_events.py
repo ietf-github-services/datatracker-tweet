@@ -62,8 +62,8 @@ class DatatrackerTracker:
             if not self.args.dry_run:
                 try:
                     self.tweet(message)
-                except:
-                    break
+                except twitter.error.TwitterError:
+                    break  # didn't tweet so we should bail
             last_seen_id = event["id"]
         return last_seen_id
 
