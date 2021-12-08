@@ -45,7 +45,6 @@ class DatatrackerTracker:
 
     def process_events(self, events, last_seen_id):
         for event in events:
-            last_seen_id = event["id"]
             if not f"draft-ietf-{self.args.wg}" in event["doc"]:
                 continue
             if self.args.debug:
@@ -65,6 +64,7 @@ class DatatrackerTracker:
                     self.tweet(message)
                 except:
                     break
+            last_seen_id = event["id"]
         return last_seen_id
 
     def get_events(self, last_seen_id=None):
@@ -101,12 +101,15 @@ class DatatrackerTracker:
         return template.format(**locals())
 
     def init_twitter(self):
-        self.twitter_api = twitter.Api(
-            consumer_key=os.environ["TWITTER_CONSUMER_KEY"],
-            consumer_secret=os.environ["TWITTER_CONSUMER_SECRET"],
-            access_token_key=os.environ["TWITTER_TOKEN_KEY"],
-            access_token_secret=os.environ["TWITTER_TOKEN_SECRET"],
-        )
+        try:
+            self.twitter_api = twitter.Api(
+                consumer_key=os.environ["TWITTER_CONSUMER_KEY"],
+                consumer_secret=os.environ["TWITTER_CONSUMER_SECRET"],
+                access_token_key=os.environ["TWITTER_TOKEN_KEY"],
+                access_token_secret=os.environ["TWITTER_TOKEN_SECRET"],
+            )
+        except KeyError as why:
+            self.error(f"Environment variable not found: {why}")
 
     def tweet(self, message, retry_count=0):
         if self.twitter_api is None:
@@ -129,7 +132,7 @@ class DatatrackerTracker:
                 self.warn(f"Duplicate tweet '{message}'")
             else:
                 self.warn(f"Tweet error code {code} ({message}). Aborting run.")
-                raise
+                raise  # not an error, so we can remember what we read up to.
 
     def parse_args(self, argv):
         parser = argparse.ArgumentParser(
@@ -183,8 +186,7 @@ class DatatrackerTracker:
                 self.warn(f"Cannot open {self.args.last_seen_file} for reading: {why}")
                 sys.exit(1)
             except ValueError as why:
-                self.warn(f"Last seen file does not contain an integer: {why}")
-                sys.exit(1)
+                self.error(f"Last seen file does not contain an integer: {why}")
         return last_seen_id
 
     def write_last_seen(self, last_seen_id):
@@ -193,8 +195,7 @@ class DatatrackerTracker:
                 with open(self.args.last_seen_file, "w") as fh:
                     fh.write(str(last_seen_id))
             except IOError as why:
-                self.warn(f"Cannot open {self.args.last_seen_file} for writing: {why}")
-                sys.exit(1)
+                self.error(f"Cannot open {self.args.last_seen_file} for writing: {why}")
 
     def get_doc(self, doc_url):
         self.note(f"Fetching: <{doc_url}>")
@@ -217,6 +218,10 @@ class DatatrackerTracker:
 
     def warn(self, message):
         sys.stderr.write(f"WARNING: {message}\n")
+
+    def error(self, message):
+        sys.stderr.write(f"ERROR: {message}\n")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
