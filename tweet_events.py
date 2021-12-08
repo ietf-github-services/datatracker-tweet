@@ -59,9 +59,8 @@ class DatatrackerTracker:
                 message = self.format_message(event, template)
             except ValueError:
                 break
-            if self.args.dry_run or self.args.debug:
-                self.note(f"Message: {message}")
-            else:
+            self.note(f"Message: {message}")
+            if not self.args.dry_run:
                 try:
                     self.tweet(message)
                 except:
