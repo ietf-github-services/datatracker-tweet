@@ -42,7 +42,7 @@ The following repository secrets need to be created in the GitHub repository's `
 
 Go into [`.github/workflows/run.yml`](.github/workflows/run.yml) and change this line:
 
-~~~
+~~~ crontab
     - cron: "15 */4 * * *"
 ~~~
 
@@ -62,10 +62,13 @@ Once in a while, you should update your copy of the repo, by pulling changes fro
 
 On a local copy, do this once:
 
+~~~ bash
 > git remote add upstream https://github.com/ietf-github-services/datatracker-tweet.git
+~~~
 
 Then, periodically you should:
 
+~~~ bash
 > git pull upstream main
 > git push origin main
-
+~~~
