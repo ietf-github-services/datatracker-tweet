@@ -53,6 +53,7 @@ Go into [`.github/workflows/run.yml`](.github/workflows/run.yml) and change this
 
 1. If they aren't already, enable Actions under `Settings` -> `Actions`.
 2. On the same page, make sure that `Workflow permissions` is set to `Read and write permissions` (so that `LAST_SEEN` can be saved to the repo).
+3. Go to the `Actions` top-level tab and click `I understand my workflows, go ahead and enable them`.
 
 
 ## 6. Update
