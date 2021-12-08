@@ -59,3 +59,13 @@ Go into [`.github/workflows/run.yml`](.github/workflows/run.yml) and change this
 ## 6. Update
 
 Once in a while, you should update your copy of the repo, by pulling changes from upstream.
+
+On a local copy, do this once:
+
+> git remote add upstream https://github.com/ietf-github-services/datatracker-tweet.git
+
+Then, periodically you should:
+
+> git pull upstream main
+> git push origin main
+
