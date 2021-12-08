@@ -118,9 +118,10 @@ class DatatrackerTracker:
             details = why[0][0]
             # https://developer.twitter.com/en/support/twitter-api/error-troubleshooting#error-codes
             code = details.get("code", None)
+            message = details.get("message", "unknown issue")
             if code in [88, 130]:
                 if retry_count < self.RETRY_MAX:
-                    self.warn(f"{details.get('message', 'Unknown issue')}. Retrying.")
+                    self.warn(f"{message}. Retrying.")
                     time.sleep(self.RETRY_DELAY)
                     self.tweet(message, retry_count + 1)
                 else:
@@ -128,6 +129,7 @@ class DatatrackerTracker:
             elif code == 187:
                 self.warn(f"Duplicate tweet '{message}'")
             else:
+                self.warn(f"Tweet error code {code} ({message}). Aborting run.")
                 raise
 
     def parse_args(self, argv):
