@@ -37,6 +37,7 @@ class DatatrackerTracker:
 
     def run(self):
         last_seen_id = self.get_last_seen()
+        self.note(f"Resuming at event: {last_seen_id}")
         events = self.get_events(last_seen_id)
         new_last_seen = self.process_events(events, last_seen_id)
         self.note(f"Last event seen: {new_last_seen}")
@@ -48,7 +49,7 @@ class DatatrackerTracker:
             if not f"draft-ietf-{self.args.wg}" in event["doc"]:
                 continue
             if self.args.debug:
-                print(f"{event['type']} {event['desc']}")
+                self.note(f"Event: {event['type']} ({event['desc']})")
             template = self.INTERESTING_EVENTS.get(event["type"], None)
             if type(template) is dict:
                 template = template.get(event["desc"], None)
@@ -59,7 +60,7 @@ class DatatrackerTracker:
             except ValueError:
                 break
             if self.args.dry_run or self.args.debug:
-                print(message)
+                self.note(f"Message: {message}")
             else:
                 try:
                     self.tweet(message)
@@ -195,7 +196,7 @@ class DatatrackerTracker:
                 sys.exit(1)
 
     def get_doc(self, doc_url):
-        self.note(f"Fetching <{doc_url}>")
+        self.note(f"Fetching: <{doc_url}>")
         try:
             req = requests.get(self.API_BASE + doc_url, timeout=15)
         except requests.exceptions.RequestException as why:
