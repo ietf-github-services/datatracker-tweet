@@ -4,14 +4,13 @@ import argparse
 import json
 import os
 import sys
-import time
 
 import requests
 
 try:
-    import twitter
+    import tweepy
 except ImportError:
-    twitter = None
+    tweepy = None
 
 
 class DatatrackerTracker:
@@ -62,7 +61,7 @@ class DatatrackerTracker:
             if not self.args.dry_run:
                 try:
                     self.tweet(message)
-                except twitter.error.TwitterError:
+                except tweepy.TweepyException:
                     break  # didn't tweet so we should bail
             last_seen_id = event["id"]
         return last_seen_id
@@ -102,37 +101,27 @@ class DatatrackerTracker:
 
     def init_twitter(self):
         try:
-            self.twitter_api = twitter.Api(
+            self.twitter_api = tweepy.Client(
                 consumer_key=os.environ["TWITTER_CONSUMER_KEY"],
                 consumer_secret=os.environ["TWITTER_CONSUMER_SECRET"],
-                access_token_key=os.environ["TWITTER_TOKEN_KEY"],
+                access_token=os.environ["TWITTER_TOKEN_KEY"],
                 access_token_secret=os.environ["TWITTER_TOKEN_SECRET"],
+                wait_on_rate_limit=True,
             )
         except KeyError as why:
             self.error(f"Environment variable not found: {why}")
+        except tweepy.TweepyException as why:
+            self.error(str(why))
 
-    def tweet(self, message, retry_count=0):
+    def tweet(self, message):
         if self.twitter_api is None:
             self.init_twitter()
         try:
-            status = self.twitter_api.PostUpdate(message)
-        except twitter.error.TwitterError as why:
-            details = why[0][0]
-            # https://developer.twitter.com/en/support/twitter-api/error-troubleshooting#error-codes
-            code = details.get("code", None)
-            message = details.get("message", "unknown issue")
-            if code in [88, 130]:
-                if retry_count < self.RETRY_MAX:
-                    self.warn(f"{message}. Retrying.")
-                    time.sleep(self.RETRY_DELAY)
-                    self.tweet(message, retry_count + 1)
-                else:
-                    self.warn(f"Exceeded max retries. Giving up.")
-            elif code == 187:
-                self.warn(f"Duplicate tweet '{message}'")
-            else:
-                self.warn(f"Tweet error code {code} ({message}). Aborting run.")
-                raise  # not an error, so we can remember what we read up to.
+            status = self.twitter_api.create_tweet(text=message)
+        except tweepy.HTTPException as why:
+            for message in why.api_messages:
+                self.warn(f"Tweet error: {message}")
+            raise  # not self.error, so we can remember what we read up to.
 
     def parse_args(self, argv):
         parser = argparse.ArgumentParser(
