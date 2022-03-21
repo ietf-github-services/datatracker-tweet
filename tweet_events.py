@@ -44,6 +44,7 @@ class DatatrackerTracker:
 
     def process_events(self, events, last_seen_id):
         for event in events:
+            last_seen_id = event["id"]
             if not f"draft-ietf-{self.args.wg}" in event["doc"]:
                 continue
             if self.args.debug:
@@ -62,8 +63,8 @@ class DatatrackerTracker:
                 try:
                     self.tweet(message)
                 except tweepy.TweepyException:
+                    last_seen_id = event["id"] - 1
                     break  # didn't tweet so we should bail
-            last_seen_id = event["id"]
         return last_seen_id
 
     def get_events(self, last_seen_id=None):
