@@ -29,7 +29,7 @@ jobs:
         TWITTER_TOKEN_KEY: ${{ secrets.TWITTER_TOKEN_KEY }}
         TWITTER_TOKEN_SECRET: ${{ secrets.TWITTER_TOKEN_SECRET }}
       run: |
-        python3 tweet_events.py -g ${{ secrets.WORKING_GROUP }} -f LAST_SEEN -m > $ $GITHUB_STEP_SUMMARY
+        python3 tweet_events.py -g ${{ secrets.WORKING_GROUP }} -f LAST_SEEN -m > $GITHUB_STEP_SUMMARY
     - name: Push update
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
