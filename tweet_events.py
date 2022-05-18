@@ -38,15 +38,14 @@ class DatatrackerTracker:
         last_seen_id = self.get_last_seen()
         self.note(f"Resuming at event: {last_seen_id}")
         if self.args.markdown:
-            print(
-                f"# Tweeting datatracker events since #{last_seen_id}"
-            )
+            print(f"# Tweeting datatracker events since #{last_seen_id}")
         events = self.get_events(last_seen_id)
         new_last_seen = self.process_events(events, last_seen_id)
         self.note(f"Last event seen: {new_last_seen}")
         self.write_last_seen(new_last_seen)
 
     def process_events(self, events, last_seen_id):
+        num = 0
         for event in events:
             last_seen_id = event["id"]
             if not f"draft-ietf-{self.args.wg}" in event["doc"]:
@@ -71,6 +70,9 @@ class DatatrackerTracker:
                 except tweepy.TweepyException:
                     last_seen_id = event["id"] - 1
                     break  # didn't tweet so we should bail
+            num += 1
+        if self.args.markdown:
+            print(f"Found {num} events.")
         return last_seen_id
 
     def get_events(self, last_seen_id=None):
