@@ -39,7 +39,7 @@ class DatatrackerTracker:
         self.note(f"Resuming at event: {last_seen_id}")
         if self.args.markdown:
             print(
-                f"# Tweeting about {self.args.wg} since datatracker event {last_seen_id}"
+                f"# Tweeting datatracker events since #{last_seen_id}"
             )
         events = self.get_events(last_seen_id)
         new_last_seen = self.process_events(events, last_seen_id)
